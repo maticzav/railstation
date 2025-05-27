@@ -29,56 +29,60 @@ async function main() {
     let interval: NodeJS.Timeout;
 
     interval = setInterval(async () => {
-        console.log("Pinging Railmap");
+        try {
+            console.log("Pinging Railmap");
 
-        // NOTE: This advertises a service to the Railmap and gets back a list of services to ping.
-        const response = await fetch(`${RAILMAP_URL}/list`, {
-            method: "POST",
-            body: JSON.stringify({
-                region: RAILWAY_REGION,
-                domain: RAILWAY_DOMAIN,
-            }),
-        }).then(res => res.json());
+            // NOTE: This advertises a service to the Railmap and gets back a list of services to ping.
+            const response = await fetch(`${RAILMAP_URL}/list`, {
+                method: "POST",
+                body: JSON.stringify({
+                    region: RAILWAY_REGION,
+                    domain: RAILWAY_DOMAIN,
+                }),
+            }).then(res => res.json());
 
-        const data = z.object({
-            stops: z.array(z.object({
-                domain: z.string(),
-            })),
-        })
+            const data = z.object({
+                stops: z.array(z.object({
+                    domain: z.string(),
+                })),
+            })
 
 
-        const parsed = data.parse(response);
+            const parsed = data.parse(response);
 
-        console.log("Parsed Railmap", parsed);
+            console.log("Parsed Railmap", parsed);
 
-        const tasks = parsed.stops.map(async stop => {
-            const start = performance.now()
+            const tasks = parsed.stops.map(async stop => {
+                const start = performance.now()
 
-            await fetch(`${stop.domain}/ping`, {
-                method: "GET",
+                await fetch(`${stop.domain}/ping`, {
+                    method: "GET",
+                });
+
+                const end = performance.now()
+
+                return {
+                    domain: stop.domain,
+                    time: end - start,
+                }
             });
 
-            const end = performance.now()
 
-            return {
-                domain: stop.domain,
-                time: end - start,
-            }
-        });
+            const results = await Promise.all(tasks);
 
+            await fetch(`${RAILMAP_URL}/report`, {
+                method: "POST",
+                body: JSON.stringify({
+                    region: RAILWAY_REGION,
+                    domain: RAILWAY_DOMAIN,
+                    results,
+                }),
+            });
 
-        const results = await Promise.all(tasks);
-
-        await fetch(`${RAILMAP_URL}/report`, {
-            method: "POST",
-            body: JSON.stringify({
-                region: RAILWAY_REGION,
-                domain: RAILWAY_DOMAIN,
-                results,
-            }),
-        });
-
-        console.log("Reported to Railmap", results);
+            console.log("Reported to Railmap", results);
+        } catch (error) {
+            console.error("Error pinging Railmap", error);
+        }
     }, 1000 * 5);
 
 
