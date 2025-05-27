@@ -10,6 +10,10 @@ async function main() {
 
     const RAILMAP_URL = process.env.RAILMAP_URL;
 
+    console.log("RAILMAP_URL", RAILMAP_URL);
+    console.log("RAILWAY_REGION", RAILWAY_REGION);
+    console.log("RAILWAY_DOMAIN", RAILWAY_DOMAIN);
+
     let PORT = 3000;
     try {
         if (process.env.PORT) {
