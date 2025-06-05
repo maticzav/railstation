@@ -33,7 +33,7 @@ async function main() {
             console.log("Pinging Railmap");
 
             // NOTE: This advertises a service to the Railmap and gets back a list of services to ping.
-            const response = await fetch(`${RAILMAP_URL}/list`, {
+            const response = await fetch(`${RAILMAP_URL}/api/list`, {
                 method: "POST",
                 body: JSON.stringify({
                     region: RAILWAY_REGION,
@@ -70,7 +70,7 @@ async function main() {
 
             const results = await Promise.all(tasks);
 
-            await fetch(`${RAILMAP_URL}/report`, {
+            await fetch(`${RAILMAP_URL}/api/report`, {
                 method: "POST",
                 body: JSON.stringify({
                     region: RAILWAY_REGION,
