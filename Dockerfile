@@ -35,16 +35,10 @@ ENV NODE_ENV="production"
 
 # Copy built application
 COPY --from=build /app /app
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl && \
-    rm -rf /var/lib/apt/lists/*
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
 
 # Start
 
 ENV PORT=3000
-EXPOSE 3000
+EXPOSE ${PORT}
 
 CMD [ "pnpm", "start" ]
