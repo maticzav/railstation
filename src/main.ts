@@ -1,8 +1,6 @@
 import fastify from "fastify";
 import { z } from 'zod'
 
-
-
 async function main() {
     // https://docs.railway.com/reference/variables#railway-provided-variables
     const RAILWAY_REGION = process.env.RAILWAY_REPLICA_REGION;
@@ -46,6 +44,7 @@ async function main() {
             const data = z.object({
                 stops: z.array(z.object({
                     domain: z.string(),
+                    url: z.string(),
                 })),
             })
 
@@ -57,7 +56,7 @@ async function main() {
             const tasks = parsed.stops.map(async stop => {
                 const start = performance.now()
 
-                await fetch(`${stop.domain}/ping`, {
+                await fetch(`${stop.url}/ping`, {
                     method: "GET",
                 });
 
@@ -104,7 +103,7 @@ async function main() {
         res.send("pong");
     });
 
-    app.listen({ port: PORT }, (err, address) => {
+    app.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
         if (err) {
             console.error(err);
             process.exit(1);
