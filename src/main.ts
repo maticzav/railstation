@@ -23,6 +23,8 @@ async function main() {
         console.error("Invalid PORT", error);
     }
 
+    console.log("PORT", PORT);
+
 
     // Create a CRON
 
@@ -89,6 +91,14 @@ async function main() {
     // Start the server
 
     const app = fastify();
+
+    app.get("/", (req, res) => {
+        res.send(`Railstation ${RAILWAY_REGION}!`);
+    });
+
+    app.get("/health", (req, res) => {
+        res.send("ok");
+    });
 
     app.get("/ping", (req, res) => {
         res.send("pong");
