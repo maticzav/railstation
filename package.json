@@ -1,6 +1,8 @@
 {
   "scripts": {
     "dev": "tsx watch src/main.ts",
+    "dev:us": "RAILWAY_REPLICA_REGION=us-west1 RAILWAY_PUBLIC_DOMAIN=localhost:3001 PORT=3001 RAILMAP_URL=http://localhost:3000 tsx watch src/main.ts",
+    "dev:eu": "RAILWAY_REPLICA_REGION=europe-west4 RAILWAY_PUBLIC_DOMAIN=localhost:3002 PORT=3002 RAILMAP_URL=http://localhost:3000 tsx watch src/main.ts",
     "start": "tsx src/main.ts"
   },
   "dependencies": {
